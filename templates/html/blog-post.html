@@ -1,0 +1,22 @@
+{{ template "header.html" . }}
+<section class="container my-5">
+    <form action="/blog-posting" method="POST" enctype="multipart/form-data" name="blogArticlePost">
+        <div class="mb-3">
+            <label for="article-title" class="form-label">Title</label>
+            <input class="form-control form-control-lg" name="article-title" placeholder="Title">
+        </div>
+        <div class="mb-3">
+            <label for="formFile" class="form-label">Header image</label>
+            <input class="form-control" type="file" name="article-img">
+        </div>
+        <div class="mb-5">
+            <label for="article-body" class="form-label">Body</label>
+            <textarea class="form-control form-control-lg" name="article-content" rows="30"></textarea>
+        </div>
+        <div class="d-flex flex-row-reverse">
+            <button type="submit" class="btn btn-primary">Post</button>
+            <!-- <button type="button" class="btn btn-primary mx-3">Save</button> -->
+        </div>
+    </form>
+</section>
+{{ template "footer.html" . }}

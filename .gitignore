@@ -1,0 +1,7 @@
+originalfile/
+/.env
+/docker_Air.txt
+/reference.txt
+tmp/
+docker/
+/.DS_Store

@@ -1,0 +1,108 @@
+{{ template "header.html" . }}
+
+<!-- Page content-->
+<div class="container my-5">
+    <!-- Blog entries-->
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="row">
+                <!-- Blog post-->
+                {{ range $key, $value := .blogArticles }}
+                {{ if eq (mod $key 2) 0 }}<div class="row">{{ end }} {{/* row 시작 */}}
+                    <div class="col-lg-6"> {{/* col-lg-6 시작 */}}
+                        <div class="card mb-4 shadow">
+                            <a href=""><img class="card-img-top img-thumbnail object-fit-cover"
+                                    src="/assets/blog_img/{{$value.HeaderImageName}}" alt="{{$value.Title}}" /></a>
+                            <div class="card-body">
+                                <div class="small text-muted">{{$value.UpdatedAt.Format "2006/01/02 15:04"}}</div>
+                                <h2 class="card-title h4 text-truncate">{{$value.Title}}</h2>
+                                <p class="card-text text-truncate">{{$value.Content}}</p>
+                                <a class="btn btn-primary" href="/blog-article/{{$value.ID}}">Read more →</a>
+                            </div>
+                        </div>
+                    </div>
+                    {{ if eq (mod $key 2) 1 }}
+                </div>{{ end }}
+                {{ end }}
+
+                {{ if ne (mod (len .blogArticles) 2) 0 }}
+            </div>{{ end }}
+
+            <!-- Pagination-->
+            <nav aria-label="Pagination">
+                <hr class="my-0" />
+                <ul class="pagination justify-content-center my-4">
+
+                    <li class="page-item {{if eq .pagination.PageNumber 1}}disabled{{end}}">
+                        <a class="page-link" href="{{if ne .pagination.PageNumber 1}}/blog/1{{end}}" tabindex="-1"
+                            aria-disabled="{{if eq .pagination.PageNumber 1}}true{{end}}">Newer</a>
+                    </li>
+                    {{ if or (ne .pagination.PageNumber 1) (eq .pagination.PageNumber .pagination.TotalPages)}}
+                    <li class="page-item disabled"><a class="page-link" href="#!">...</a></li>
+                    {{ end }}
+
+                    {{ range $index,$value:=.pagination.VisiblePages }}
+                    <li class="page-item {{ if eq $value $.pagination.PageNumber}}active{{end}}" aria-current="page">
+                        <a class="page-link" {{ if ne $value $.pagination.PageNumber}} href="/blog/{{ $value }}"
+                            {{end}}>{{ $value}}</a>
+                    </li>
+                    {{ end }}
+
+                    {{ if or (eq .pagination.PageNumber 1) (ne .pagination.PageNumber .pagination.TotalPages)}}
+                    <li class="page-item disabled"><a class="page-link" href="#!">...</a></li>
+                    {{ end }}
+                    <li class="page-item {{if eq .pagination.PageNumber .pagination.TotalPages}}disabled{{end}}">
+                        <a class="page-link"
+                            href="{{if ne .pagination.PageNumber .pagination.TotalPages}} /blog/{{.pagination.TotalPages}} {{end}}"
+                            aria-disabled="{{if eq .pagination.PageNumber .pagination.TotalPages}}true{{end}}">Older</a>
+                    </li>
+                </ul>
+            </nav>
+
+        </div>
+    </div>
+    <!-- Side widgets-->
+    <div class="col-lg-4">
+        <!-- Search widget-->
+        <div class="card mb-4">
+            <div class="card-header">Search</div>
+            <div class="card-body">
+                <div class="input-group">
+                    <input class="form-control" type="text" placeholder="Enter search term..."
+                        aria-label="Enter search term..." aria-describedby="button-search" />
+                    <button class="btn btn-primary" id="button-search" type="button">Go!</button>
+                </div>
+            </div>
+        </div>
+        <!-- Categories widget-->
+        <div class="card mb-4">
+            <div class="card-header">Categories</div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-sm-6">
+                        <ul class="list-unstyled mb-0">
+                            <li><a href="#!">Web Design</a></li>
+                            <li><a href="#!">HTML</a></li>
+                            <li><a href="#!">Freebies</a></li>
+                        </ul>
+                    </div>
+                    <div class="col-sm-6">
+                        <ul class="list-unstyled mb-0">
+                            <li><a href="#!">JavaScript</a></li>
+                            <li><a href="#!">CSS</a></li>
+                            <li><a href="#!">Tutorials</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Side widget-->
+        <!-- <div class="card mb-4">
+                <div class="card-header">Side Widget</div>
+                <div class="card-body">You can put anything you want inside of these side widgets. They are easy to use,
+                    and feature the Bootstrap 5 card component!</div>
+            </div> -->
+    </div>
+</div>
+</div>
+{{ template "footer.html" . }}
