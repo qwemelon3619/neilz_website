@@ -16,7 +16,7 @@
                             <div class="card-body">
                                 <div class="small text-muted">{{$value.UpdatedAt.Format "2006/01/02 15:04"}}</div>
                                 <h2 class="card-title h4 text-truncate">{{$value.Title}}</h2>
-                                <p class="card-text text-truncate">{{$value.Content}}</p>
+                                <p class="card-text text-truncate">{{$value.Subtitle}}</p>
                                 <a class="btn btn-primary" href="/blog-article/{{$value.ID}}">Read more →</a>
                             </div>
                         </div>
@@ -44,7 +44,7 @@
                     {{ range $index,$value:=.pagination.VisiblePages }}
                     <li class="page-item {{ if eq $value $.pagination.PageNumber}}active{{end}}" aria-current="page">
                         <a class="page-link" {{ if ne $value $.pagination.PageNumber}} href="/blog/{{ $value }}"
-                            {{end}}>{{ $value}}</a>
+                            {{end}}>{{ $value }}</a>
                     </li>
                     {{ end }}
 

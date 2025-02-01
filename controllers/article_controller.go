@@ -1,28 +1,47 @@
 package controllers
 
 import (
+	"errors"
+	"html/template"
 	"image"
 	"image/draw"
+	"image/jpeg"
 	"image/png"
-	_ "image/png"
 	"log"
 	"net/http"
 	"os"
 	"path/filepath"
 	"strconv"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 	"neilz.space/web/models"
 )
 
 func BlogArticleRoute(c *gin.Context) {
-	c.HTML(http.StatusOK, "blog-article.html", gin.H{"title": "Blog Article"})
+	articleNumber_s := c.Param("articleNumber")
+	articleNumber, err := strconv.Atoi(articleNumber_s)
+	if err != nil {
+		ErrorRediect(c, err.Error())
+	}
+	article, err := models.GetBlogArticle(articleNumber)
+	if err != nil {
+		ErrorRediect(c, err.Error())
+	}
+	content := template.HTML(article.Content)
+	c.HTML(http.StatusOK, "blog-article.html",
+		gin.H{
+			"title":       "Blog Posting",
+			"blogArticle": article,
+			"content":     content,
+		})
 }
 func BlogPostPageRoute(c *gin.Context) {
+
 	c.HTML(http.StatusOK, "blog-post.html", gin.H{"title": "Blog Posting"})
 }
-func imageResize(filepath string) error {
-	file, err := os.Open(filepath)
+func imageResize(filepath_ string) error {
+	file, err := os.Open(filepath_)
 	if err != nil {
 		return err
 	}
@@ -43,15 +62,25 @@ func imageResize(filepath string) error {
 	}).SubImage(rect)
 
 	// 3. 파일 저장 (원래 파일에 덮어쓰기)
-	outFile, err := os.Create(filepath) // 덮어쓰기
+	outFile, err := os.Create(filepath_) // 덮어쓰기
 	if err != nil {
 		return err
 	}
 	defer outFile.Close()
-
-	err = png.Encode(outFile, croppedImg) // Encode the cropped image
-	if err != nil {
-		return err
+	ext := filepath.Ext(filepath_)
+	log.Print(ext)
+	if ext == ".png" {
+		err = png.Encode(outFile, croppedImg) // Encode the cropped image
+		if err != nil {
+			return err
+		}
+	} else if ext == ".jpeg" || ext == ".jpg" {
+		err = jpeg.Encode(outFile, croppedImg, nil) // Encode the cropped image
+		if err != nil {
+			return err
+		}
+	} else {
+		return errors.New("file does not support")
 	}
 
 	return nil
@@ -81,10 +110,20 @@ func resize(img image.Image, width, height int) image.Image {
 
 	return newImg
 }
+
 func BlogPostingRoute(c *gin.Context) {
 	article := models.BlogArticleInput{}
 	article.Title = c.PostForm("article-title")
-	article.Content = c.PostForm("article-content")
+	article.SubTitle = c.PostForm("article-subtitle")
+	// article.Content = c.PostForm("article-content")
+
+	content := c.PostForm("article-content")
+	removeContentString := []string{"<select class=\"ql-ui\" contenteditable=\"false\"><option value=\"plain\">Plain</option><option value=\"bash\">Bash</option><option value=\"cpp\">C++</option><option value=\"cs\">C#</option><option value=\"css\">CSS</option><option value=\"diff\">Diff</option><option value=\"xml\">HTML/XML</option><option value=\"java\">Java</option><option value=\"javascript\">JavaScript</option><option value=\"markdown\">Markdown</option><option value=\"php\">PHP</option><option value=\"python\">Python</option><option value=\"ruby\">Ruby</option><option value=\"sql\">SQL</option></select>", "contenteditable=\"true\""}
+	for _, value := range removeContentString {
+		content = strings.Replace(content, value, "", -1)
+	}
+	article.Content = content
+
 	img, err := c.FormFile("article-img")
 	if err != nil {
 		ErrorRediect(c, err.Error())
@@ -139,21 +178,19 @@ func BlogListRoute(c *gin.Context) {
 	if err != nil {
 		ErrorRediect(c, err.Error())
 	}
-	totalPages := numberofBlogArticles % 6
+	totalPages := numberofBlogArticles/6 + 1
 	startpage := pageNumber - 2
-	if startpage < 1 {
+	endpage := pageNumber + 2
+	if startpage <= 1 {
 		startpage = 1
 	}
-	endpage := pageNumber + 2
 	if endpage >= totalPages {
-		startpage = totalPages - 2
 		endpage = totalPages
 	}
 	var visiblePages []int
 	for i := startpage; i <= endpage; i++ {
 		visiblePages = append(visiblePages, i)
 	}
-	log.Print(visiblePages, pageNumber)
 	pagination := PageData{
 		PageNumber:   pageNumber, // 실제 페이지 번호
 		TotalPages:   totalPages, // 실제 전체 페이지 수

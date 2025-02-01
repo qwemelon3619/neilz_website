@@ -16,6 +16,7 @@ func main() {
 
 	models.ConnectDataBase()
 	defer models.CloseDataBase()
+
 	r := gin.Default()
 	r.Static("/css", "./templates/css")
 	r.Static("/js", "./templates/js")
@@ -36,6 +37,6 @@ func main() {
 	r.POST("/blog-posting", controllers.BlogPostingRoute)
 
 	r.GET("/blog-post-test", controllers.AllBlogListJSON)
-
+	// r.NoRoute(func(c *gin.Context) { controllers.ErrorRediect(c, "wrong url") })
 	r.Run(":8080")
 }

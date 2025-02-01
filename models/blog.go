@@ -22,6 +22,7 @@ type Author struct {
 }
 type BlogArticleInput struct {
 	Title           string `gorm:"not null;"`
+	SubTitle        string
 	Content         string `gorm:"not null;"`
 	HeaderImageName string
 }
@@ -29,7 +30,8 @@ type BlogArticle struct {
 	gorm.Model
 	Author
 	Title           string
-	Content         string
+	Subtitle        string
+	Content         string `gorm:"type:text"`
 	HeaderImageName string
 }
 
@@ -37,6 +39,7 @@ func SaveBlogArticle(input BlogArticleInput) error {
 
 	article := BlogArticle{}
 	article.Title = input.Title
+	article.Subtitle = input.SubTitle
 	article.Content = input.Content
 	article.Author.Name = "Neil"
 	article.Author.Job = "Backend Developer"
@@ -81,6 +84,8 @@ func GetPageBlogArticles(pageNumber int) ([]BlogArticle, error) {
 			end = len(articles)
 		}
 		slicedArticles = articles[start:end]
+	} else {
+		slicedArticles = articles
 	}
 	return slicedArticles, nil
 }
