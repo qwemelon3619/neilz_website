@@ -29,16 +29,22 @@ func BlogArticleRoute(c *gin.Context) {
 		ErrorRediect(c, err.Error())
 	}
 	content := template.HTML(article.Content)
+	isLoggedIn := c.GetBool("isLoggedIn")
 	c.HTML(http.StatusOK, "blog-article.html",
 		gin.H{
 			"title":       "Blog Posting",
 			"blogArticle": article,
 			"content":     content,
+			"isLoggedIn":  isLoggedIn,
 		})
 }
 func BlogPostPageRoute(c *gin.Context) {
-
-	c.HTML(http.StatusOK, "blog-post.html", gin.H{"title": "Blog Posting"})
+	isLoggedIn := c.GetBool("isLoggedIn")
+	c.HTML(http.StatusOK, "blog-post.html",
+		gin.H{
+			"title":      "Blog Posting",
+			"isLoggedIn": isLoggedIn,
+		})
 }
 func imageResize(filepath_ string) error {
 	file, err := os.Open(filepath_)
@@ -151,8 +157,9 @@ func BlogPostingRoute(c *gin.Context) {
 		ErrorRediect(c, err.Error())
 		return
 	}
-	// c.JSON(http.StatusOK, article)
-	Redirect(c, "/blog/1")
+
+	// Redirect(c, "/blog/1")
+	c.Redirect(http.StatusSeeOther, "/blog/1")
 }
 
 type PageData struct {
@@ -196,11 +203,12 @@ func BlogListRoute(c *gin.Context) {
 		TotalPages:   totalPages, // 실제 전체 페이지 수
 		VisiblePages: visiblePages,
 	}
-
+	isLoggedIn := c.GetBool("isLoggedIn")
 	c.HTML(http.StatusOK, "blog-list.html", gin.H{
 		"title":        "Blog List",
 		"blogArticles": blogArticles,
 		"pagination":   pagination,
+		"isLoggedIn":   isLoggedIn,
 	})
 }
 func AllBlogListJSON(c *gin.Context) {

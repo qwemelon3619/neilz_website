@@ -8,7 +8,7 @@
             <div class="row">
                 <!-- Blog post-->
                 {{ range $key, $value := .blogArticles }}
-                {{ if eq (mod $key 2) 0 }}<div class="row">{{ end }} {{/* row 시작 */}}
+                {{ if eq (mod $key 2) 0 }}<div class="row">{{ end }}
                     <div class="col-lg-6"> {{/* col-lg-6 시작 */}}
                         <div class="card mb-4 shadow">
                             <a href=""><img class="card-img-top img-thumbnail object-fit-cover"

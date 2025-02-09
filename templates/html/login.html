@@ -1,0 +1,31 @@
+{{ template "header.html" . }}
+<!-- Section: Design Block -->
+<section class="text-center text-lg-start">
+    <div class="card mb-3">
+        <div class="row g-0 d-flex align-items-center">
+            <div class="col-lg-8">
+                <div class="card-body py-5 px-md-5">
+                    <form action="/logining" method="POST" enctype="multipart/form-data" id="loginform">
+                        <!-- Email input -->
+                        <div data-mdb-input-init class="form-outline mb-4">
+                            <input type="text" id="id" name="id" class="form-control" />
+                            <label class="form-label">Email address</label>
+                        </div>
+                        <!-- Password input -->
+                        <div data-mdb-input-init class="form-outline mb-4">
+                            <input type="password" id="password" name="password" class="form-control" />
+                            <label class="form-label">Password</label>
+                        </div>
+                        <!-- Submit button -->
+                        <button type="submit" data-mdb-button-init data-mdb-ripple-init
+                            class="btn btn-primary btn-block mb-4">login</button>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- Section: Design Block -->
+
+{{ template "footer.html" . }}

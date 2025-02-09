@@ -40,7 +40,8 @@ func ConnectDataBase() {
 	}
 
 	DB.AutoMigrate(&BlogArticle{})
-
+	DB.AutoMigrate(&Account{})
+	DB.AutoMigrate(&RefreshToken{})
 }
 
 func CloseDataBase() {
