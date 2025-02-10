@@ -5,3 +5,5 @@ originalfile/
 tmp/
 docker/
 /.DS_Store
+/.vscode
+/dockerfile
