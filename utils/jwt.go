@@ -19,7 +19,7 @@ func GenerateAccessToken(userUUID uuid.UUID) (string, error) {
 	claims := AuthToken{}
 	claims.UserUUID = userUUID
 	claims.RegisteredClaims = jwt.RegisteredClaims{
-		ExpiresAt: jwt.NewNumericDate(time.Now().Add(30 * time.Minute)),
+		ExpiresAt: jwt.NewNumericDate(time.Now().Add(60 * time.Minute)),
 		IssuedAt:  jwt.NewNumericDate(time.Now()),
 		NotBefore: jwt.NewNumericDate(time.Now()),
 	}

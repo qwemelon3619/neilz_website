@@ -1,0 +1,25 @@
+{{ template "header.html" .}}
+<link href="/css/article_styles.css" rel="stylesheet" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css" /> -->
+<!-- Page Content-->
+<section class="container my-5">
+    <div class="row">
+        <div class="col-sm">
+        </div>
+        <div class="col-sm">
+            <div class="card align-middle" style="width: 18rem;">
+                <div class="card-body">
+                    <h5 class="card-title">Remove "{{ .title}}"</h5>
+                    <p class="card-text">Are you want to remove this aritcle?</p>
+                    <form action="/auth/blog-removing/{{.articleNumber}}" method="POST">
+                        <button class="btn btn-primary" type="submit">Button</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm"></div>
+</section>
+
+{{ template "footer.html" .}}

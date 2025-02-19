@@ -35,7 +35,15 @@
                         {{ .content }}
                     </div>
                 </article>
+                <br>
+                {{if .isLoggedIn }}
+                <a class="btn btn-primary" href="/auth/blog-edit/{{ .articleNumber }}" role="button"
+                    value="Edit">Edit</a>
+                <a class="btn btn-primary" href="/auth/blog-remove/{{ .articleNumber }}" role="button"
+                    value="Remove">Remove</a>
+                {{end }}
             </div>
+
         </div>
     </div>
 </section>

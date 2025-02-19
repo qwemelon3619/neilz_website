@@ -11,7 +11,8 @@
                 {{ if eq (mod $key 2) 0 }}<div class="row">{{ end }}
                     <div class="col-lg-6"> {{/* col-lg-6 시작 */}}
                         <div class="card mb-4 shadow">
-                            <a href=""><img class="card-img-top img-thumbnail object-fit-cover"
+                            <a href="/blog-article/{{$value.ID}}"><img
+                                    class="card-img-top img-thumbnail object-fit-cover"
                                     src="/assets/blog_img/{{$value.HeaderImageName}}" alt="{{$value.Title}}" /></a>
                             <div class="card-body">
                                 <div class="small text-muted">{{$value.UpdatedAt.Format "2006/01/02 15:04"}}</div>
@@ -96,6 +97,9 @@
                 </div>
             </div>
         </div>
+        {{ if .isLoggedIn }}
+        <a href="/auth/blog-post" class="btn btn-primary">New Post</a>
+        {{ end }}
         <!-- Side widget-->
         <!-- <div class="card mb-4">
                 <div class="card-header">Side Widget</div>

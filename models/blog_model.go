@@ -36,7 +36,6 @@ type BlogArticle struct {
 }
 
 func SaveBlogArticle(input BlogArticleInput) error {
-
 	article := BlogArticle{}
 	article.Title = input.Title
 	article.Subtitle = input.SubTitle
@@ -53,6 +52,36 @@ func SaveBlogArticle(input BlogArticleInput) error {
 	}
 	return nil
 }
+func EditBlogArticle(input BlogArticleInput, articleNumber int) error {
+	article := BlogArticle{}
+	article.ID = uint(articleNumber)
+	article.Title = input.Title
+	article.Subtitle = input.SubTitle
+	article.Content = input.Content
+	article.Author.Name = "Neil"
+	article.Author.Job = "Backend Developer"
+	if input.HeaderImageName != "" {
+		article.HeaderImageName = input.HeaderImageName
+	}
+
+	_, err := article.EditArticleInDB()
+
+	if err != nil {
+		// c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return errors.New("DataBase Error: could not save the data")
+	}
+	return nil
+}
+func RemoveBlogAritcle(articleNumber int) error {
+	article := BlogArticle{}
+	article.ID = uint(articleNumber)
+	_, err := article.RemoveArticleInDB()
+	if err != nil {
+		return errors.New("DataBase Error: could not save the data")
+	}
+	return nil
+}
+
 func (a *BlogArticle) SaveArticleInDB() (*BlogArticle, error) {
 	err := DB.Create(&a).Error
 	if err != nil {
@@ -60,7 +89,20 @@ func (a *BlogArticle) SaveArticleInDB() (*BlogArticle, error) {
 	}
 	return a, nil
 }
-
+func (a *BlogArticle) EditArticleInDB() (*BlogArticle, error) {
+	err := DB.Model(&a).Update(a).Error
+	if err != nil {
+		return &BlogArticle{}, err
+	}
+	return a, nil
+}
+func (a *BlogArticle) RemoveArticleInDB() (*BlogArticle, error) {
+	err := DB.Delete(&a).Error
+	if err != nil {
+		return &BlogArticle{}, err
+	}
+	return a, nil
+}
 func GetAllBlogArticles() ([]BlogArticle, error) {
 	var articles []BlogArticle
 	result := DB.Model([]BlogArticle{}).Order("ID desc").Find(&articles)

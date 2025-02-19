@@ -44,3 +44,10 @@ func ErrorRediect(c *gin.Context, errorMessage string) {
 	log.Println(errorMessage)
 	c.Redirect(http.StatusSeeOther, "/error?error="+url.QueryEscape(errorMessage))
 }
+
+func OpensourcePageRoute(c *gin.Context) {
+	c.HTML(http.StatusOK, "opensource.html",
+		gin.H{
+			"title": "Open Source Lisence",
+		})
+}

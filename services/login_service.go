@@ -2,6 +2,7 @@ package services
 
 import (
 	"errors"
+	"regexp"
 
 	"golang.org/x/crypto/bcrypt"
 	"neilz.space/web/models"
@@ -21,11 +22,18 @@ func RegisterService(ID string, password string) error {
 	err = models.SaveUserEmailAndPassword(ID, string(hashedPassword))
 	return err
 }
+func isValidUsername(username string) bool {
+	r := regexp.MustCompile("^[a-z0-9]+$")
+	return r.MatchString(username)
+}
 
 func LoginService(userID, userPassword, hostInfo string) (string, string, error) {
 
 	// find user by user_id
-
+	check := isValidUsername(userID)
+	if !check {
+		return "", "", errors.New("input error")
+	}
 	usr, err := models.FindUserByUserID(userID)
 	if err != nil {
 		return "", "", errors.New("input error")
@@ -33,7 +41,7 @@ func LoginService(userID, userPassword, hostInfo string) (string, string, error)
 
 	// compare password
 	if !utils.IsPasswordCorrect(usr.UserPassword, userPassword) {
-		return "", "", errors.New("incorrect password")
+		return "", "", errors.New("input error")
 	}
 
 	// generate Access Token

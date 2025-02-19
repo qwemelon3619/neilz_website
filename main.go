@@ -45,12 +45,18 @@ func main() {
 
 	r.POST("/logining", controllers.LoginRoute)
 
-	r.GET("/register", controllers.RegisterPageRout)
+	r.GET("/register", controllers.RegisterPageRoute)
 	r.POST("/registering", controllers.RegisterRoute)
+
+	r.GET("/opensource", controllers.OpensourcePageRoute)
 
 	auth := r.Group("/auth")
 	auth.Use(middlewares.RequireAuth)
 	auth.POST("/blog-posting", controllers.BlogPostingRoute)
 	auth.GET("/blog-post", controllers.BlogPostPageRoute)
+	auth.GET("/blog-edit/:articleNumber", controllers.BlogEditPageRoute)
+	auth.POST("/blog-editing/:articleNumber", controllers.BlogEditingRoute)
+	auth.GET("/blog-remove/:articleNumber", controllers.BlogRemoveRoute)
+	auth.POST("/blog-removing/:articleNumber", controllers.BlogRemovingRoute)
 	r.Run(":8080")
 }
