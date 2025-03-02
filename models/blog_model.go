@@ -144,3 +144,38 @@ func GetNumberOfBlogArticles() (int, error) {
 	DB.Model([]BlogArticle{}).Count(&numberOfArticle)
 	return numberOfArticle, nil
 }
+func GetNumberOfSearchedArticles(keyword string) (int, error) {
+	var articles []BlogArticle
+	result := DB.Where("title LIKE ?", "%"+keyword+"%").
+		Or("subtitle LIKE ?", "%"+keyword+"%").
+		Order("ID desc").
+		Find(&articles)
+	if result.Error != nil {
+		return 0, errors.New("DB error")
+	}
+	return len(articles), nil
+}
+func GetSearchedArticles(keyword string, pageNumber int) ([]BlogArticle, error) {
+	var articles []BlogArticle
+	maxNumberOfArticles := 6
+	result := DB.Where("title LIKE ?", "%"+keyword+"%").
+		Or("subtitle LIKE ?", "%"+keyword+"%").
+		Order("ID desc").
+		Find(&articles)
+
+	if result.Error != nil {
+		return []BlogArticle{}, errors.New("DB error")
+	}
+	var slicedArticles []BlogArticle
+	if len(articles) > maxNumberOfArticles {
+		start := (pageNumber - 1) * maxNumberOfArticles
+		end := pageNumber * maxNumberOfArticles
+		if pageNumber*maxNumberOfArticles >= len(articles) {
+			end = len(articles)
+		}
+		slicedArticles = articles[start:end]
+	} else {
+		slicedArticles = articles
+	}
+	return slicedArticles, nil
+}

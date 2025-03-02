@@ -7,6 +7,7 @@ import (
 	"path/filepath"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	"neilz.space/web/models"
@@ -57,25 +58,36 @@ func BlogPostingRoute(c *gin.Context) {
 	article.Content = content
 
 	img, err := c.FormFile("article-img")
-	if err != nil {
+	if err != nil && err != http.ErrMissingFile {
 		ErrorRediect(c, err.Error())
 		return
-	}
+	} else if err == http.ErrMissingFile {
+		article.HeaderImageName = "sample.jpg"
+	} else if img != nil {
+		timestamp := time.Now().UnixNano()
+		randomString := utils.GenerateRandomString(8)
+		filename_e := strings.Split(img.Filename, ".")
+		file_e := filename_e[len(filename_e)-1]
+		img.Filename = strconv.Itoa(int(timestamp)) + "_" + randomString + "." + file_e
+		if err != nil {
+			ErrorRediect(c, err.Error())
+			return
+		}
+		filePath := filepath.Join("./templates/assets/blog_img/", img.Filename)
+		log.Print(filePath)
+		article.HeaderImageName = img.Filename
 
-	filePath := filepath.Join("./templates/assets/blog_img/", img.Filename)
-	log.Print(filePath)
-	article.HeaderImageName = img.Filename
+		err = c.SaveUploadedFile(img, filePath)
+		if err != nil {
+			ErrorRediect(c, err.Error())
+			return
+		}
 
-	err = c.SaveUploadedFile(img, filePath)
-	if err != nil {
-		ErrorRediect(c, err.Error())
-		return
-	}
-
-	err = utils.ImageResize(filePath) //crop image
-	if err != nil {
-		ErrorRediect(c, err.Error())
-		return
+		err = utils.ImageResize(filePath) //crop image
+		if err != nil {
+			ErrorRediect(c, err.Error())
+			return
+		}
 	}
 
 	err = models.SaveBlogArticle(article)
@@ -247,4 +259,53 @@ func BlogRemovingRoute(c *gin.Context) {
 		ErrorRediect(c, err.Error())
 	}
 	c.Redirect(http.StatusSeeOther, "/blog/1")
+}
+func BlogSearchRoute(c *gin.Context) {
+	keyword := c.Query("search")
+	articleNumber_s := c.Param("pageNumber")
+	articleNumber, err := strconv.Atoi(articleNumber_s)
+	if err != nil {
+		ErrorRediect(c, err.Error())
+	}
+	searchedArticles, err := models.GetSearchedArticles(keyword, articleNumber)
+	if err != nil {
+		ErrorRediect(c, err.Error())
+	}
+
+	pageNumber_S := c.Param("pageNumber")
+	pageNumber, err := strconv.Atoi(pageNumber_S)
+	if err != nil {
+		ErrorRediect(c, "Bad request")
+	}
+
+	numberofBlogArticles, err := models.GetNumberOfSearchedArticles(keyword)
+	if err != nil {
+		ErrorRediect(c, err.Error())
+	}
+	totalPages := numberofBlogArticles/6 + 1
+	startpage := pageNumber - 2
+	endpage := pageNumber + 2
+	if startpage <= 1 {
+		startpage = 1
+	}
+	if endpage >= totalPages {
+		endpage = totalPages
+	}
+	var visiblePages []int
+	for i := startpage; i <= endpage; i++ {
+		visiblePages = append(visiblePages, i)
+	}
+	pagination := PageData{
+		PageNumber:   pageNumber, // 실제 페이지 번호
+		TotalPages:   totalPages, // 실제 전체 페이지 수
+		VisiblePages: visiblePages,
+	}
+	isLoggedIn := c.GetBool("isLoggedIn")
+	c.HTML(http.StatusOK, "blog-search.html", gin.H{
+		"title":        "Blog Searched",
+		"blogArticles": searchedArticles,
+		"pagination":   pagination,
+		"isLoggedIn":   isLoggedIn,
+		"keyword":      keyword,
+	})
 }

@@ -40,13 +40,14 @@ func main() {
 	// r.POST("/blog-posting", controllers.BlogPostingRoute)
 	r.GET("/blog-post-test", controllers.AllBlogListJSON)
 
+	r.GET("/blog-search/:pageNumber", controllers.BlogSearchRoute)
 	r.GET("/login", controllers.LoginPageRoute)
 	r.GET("/logout", controllers.LogoutRoute)
 
 	r.POST("/logining", controllers.LoginRoute)
 
-	r.GET("/register", controllers.RegisterPageRoute)
-	r.POST("/registering", controllers.RegisterRoute)
+	// r.GET("/register", controllers.RegisterPageRoute)
+	// r.POST("/registering", controllers.RegisterRoute)
 
 	r.GET("/opensource", controllers.OpensourcePageRoute)
 

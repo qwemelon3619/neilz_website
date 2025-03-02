@@ -7,6 +7,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"neilz.space/web/services"
+	"neilz.space/web/utils"
 )
 
 func RegisterPageRoute(c *gin.Context) {
@@ -28,7 +29,17 @@ func LoginPageRoute(c *gin.Context) {
 }
 func LoginRoute(c *gin.Context) {
 	userID := c.PostForm("id")
+	check := utils.IsValidID(userID)
+	if !check {
+		ErrorRediect(c, "input error")
+		return
+	}
 	userPassword := c.PostForm("password")
+	check = utils.IsValidPassword(userPassword)
+	if !check {
+		ErrorRediect(c, "input error")
+		return
+	}
 	log.Println(userID, userPassword)
 	userAgent := c.Request.UserAgent()
 	ipAddress := c.ClientIP()

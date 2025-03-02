@@ -1,6 +1,10 @@
 package utils
 
-import "golang.org/x/crypto/bcrypt"
+import (
+	"regexp"
+
+	"golang.org/x/crypto/bcrypt"
+)
 
 func IsPasswordCorrect(hashed string, pass string) bool {
 
@@ -10,4 +14,15 @@ func IsPasswordCorrect(hashed string, pass string) bool {
 	} else {
 		return true
 	}
+}
+
+func IsValidID(id string) bool {
+	allowedChars := `^[a-zA-Z0-9]`
+	regex := regexp.MustCompile(allowedChars)
+	return regex.MatchString(id)
+}
+func IsValidPassword(password string) bool {
+	allowedChars := `^[!@#$%^&*()_+=a-zA-Z0-9-]+$`
+	regex := regexp.MustCompile(allowedChars)
+	return regex.MatchString(password)
 }

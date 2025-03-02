@@ -6,14 +6,23 @@ import (
 	"net/url"
 
 	"github.com/gin-gonic/gin"
+	"neilz.space/web/models"
 )
 
 func IndexRoute(c *gin.Context) {
 	isLoggedIn := c.GetBool("isLoggedIn")
+	articles, err := models.GetAllBlogArticles()
+	if err != nil {
+		ErrorRediect(c, "DB error")
+	}
+	if len(articles) >= 3 {
+		articles = articles[:3]
+	}
 	c.HTML(http.StatusOK, "index.html",
 		gin.H{
 			"title":      "HomePage",
 			"isLoggedIn": isLoggedIn,
+			"articles":   articles,
 		})
 }
 

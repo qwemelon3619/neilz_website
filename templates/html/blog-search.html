@@ -47,8 +47,9 @@
 
                     {{ range $index,$value:=.pagination.VisiblePages }}
                     <li class="page-item {{ if eq $value $.pagination.PageNumber}}active{{end}}" aria-current="page">
-                        <a class="page-link" {{ if ne $value $.pagination.PageNumber}} href="/blog-search/{{ $value }}"
-                            {{end}}>{{ $value }}</a>
+                        <a class="page-link" {{ if ne $value $.pagination.PageNumber}}
+                            href="/blog-search/{{ $value }}?search={{ $.keyword }}" {{end}}>{{ $value
+                            }}</a>
                     </li>
                     {{ end }}
 
@@ -62,7 +63,6 @@
                     </li>
                 </ul>
             </nav>
-
         </div>
     </div>
     <!-- Side widgets-->
@@ -131,5 +131,4 @@
         });
     });
 </script>
-
 {{ template "footer.html" . }}
